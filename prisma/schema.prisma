@@ -1,0 +1,50 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "dart run orm"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id    Int     @id @default(autoincrement())
+  email String
+  name  String
+  password String
+  send_chats Conversation[] @relation(name: "Sender")
+  receive_chats Conversation[] @relation(name: "Receiver")
+}
+
+model Authentication {
+  id  Int @id @default(autoincrement())
+  user_id Int
+  access_token String
+  expire_date DateTime
+
+}
+
+model Chat {
+id Int @id @default(autoincrement())
+name String
+created_date DateTime
+conversation Conversation[]
+
+}
+
+model Conversation {
+id Int @id @default(autoincrement())
+chat Chat @relation(fields: [chat_id], references: [id])
+chat_id Int
+sender User @relation("Sender",fields: [sender_id], references: [id])
+sender_id Int
+receiver User @relation("Receiver",fields: [receiver_id], references: [id])
+receiver_id Int
+message String
+sent_date DateTime
+}
+
+
